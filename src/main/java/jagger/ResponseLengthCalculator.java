@@ -10,7 +10,7 @@ import com.griddynamics.jagger.invoker.InvocationException;
 import com.griddynamics.jagger.invoker.v2.JHttpResponse;
 
 
-public class ResponceLengthCalculator extends ServicesAware implements Provider<InvocationListener> {
+public class ResponseLengthCalculator extends ServicesAware implements Provider<InvocationListener> {
 
     private final String metricName = "avg-response-content-length-counter";
 

@@ -9,12 +9,9 @@ import com.griddynamics.jagger.user.test.configurations.JLoadTest;
 import com.griddynamics.jagger.user.test.configurations.JParallelTestsGroup;
 import com.griddynamics.jagger.user.test.configurations.JTestDefinition;
 import com.griddynamics.jagger.user.test.configurations.auxiliary.Id;
-import com.griddynamics.jagger.user.test.configurations.load.JLoadProfileInvocation;
 import com.griddynamics.jagger.user.test.configurations.load.JLoadProfileUserGroups;
 import com.griddynamics.jagger.user.test.configurations.load.JLoadProfileUsers;
-import com.griddynamics.jagger.user.test.configurations.load.auxiliary.InvocationCount;
 import com.griddynamics.jagger.user.test.configurations.load.auxiliary.NumberOfUsers;
-import com.griddynamics.jagger.user.test.configurations.load.auxiliary.ThreadCount;
 import com.griddynamics.jagger.user.test.configurations.termination.JTerminationCriteria;
 import com.griddynamics.jagger.user.test.configurations.termination.JTerminationCriteriaBackground;
 import com.griddynamics.jagger.user.test.configurations.termination.JTerminationCriteriaDuration;
@@ -34,12 +31,18 @@ public class JLoadScenarioProvider extends JaggerPropertiesProvider {
     @Bean
     public JLoadScenario testJaggerLoadScenario() {
 
-        Long maxDurationInSecondsGeneral = Long.valueOf(getTestPropertyValue("jagger.load.scenario.tests.termination.max.duration.seconds"));
+        //90
+        Integer maxDurationInSecondsGeneral = Integer.valueOf(getTestPropertyValue("jagger.load.scenario.tests.termination.max.duration.seconds"));
+        //https://httpbin.org:443
         String url = getTestPropertyValue("jagger.load.scenario.tests.url");
 
-        Long iterationsNumberForTest1 = Long.valueOf(getTestPropertyValue("jagger.load.scenario.test1.termination.iterations"));
-        Long userNumberForTest1 = Long.valueOf(getTestPropertyValue("jagger.load.scenario.test1.users"));
+        //5
+        Integer iterationsNumberForTest1 = Integer.valueOf(getTestPropertyValue("jagger.load.scenario.test1.termination.iterations"));
+        //2
+        Integer userNumberForTest1 = Integer.valueOf(getTestPropertyValue("jagger.load.scenario.test1.users"));
+        //3000
         Integer delayInvocationDurationForTest1 = Integer.valueOf(getTestPropertyValue("jagger.load.scenario.test1.delay.invocation.in.milliseconds"));
+        ///get
         String pathForTest1 = getTestPropertyValue("jagger.load.scenario.test1.url.path");
 
         JTestDefinition testDefinitionForTest1 = JTestDefinition
@@ -76,13 +79,14 @@ public class JLoadScenarioProvider extends JaggerPropertiesProvider {
 
 
         //120
-        Long terminationDurationForTest2 = Long.valueOf(getTestPropertyValue("jagger.load.scenario.test2.termination.duration.in.seconds"));
+        Integer terminationDurationForTest2 = Integer.valueOf(getTestPropertyValue("jagger.load.scenario.test2.termination.duration.in.seconds"));
         //3
         Integer userNumberForTest2 = Integer.valueOf(getTestPropertyValue("jagger.load.scenario.test2.users"));
-        //1500
+        //15000
         Integer delayInvocationDurationForTest2 = Integer.valueOf(getTestPropertyValue("jagger.load.scenario.test2.delay.invocation.in.milliseconds"));
         //20
-        Integer delayStartDurationForTest2 = Integer.valueOf(getTestPropertyValue("jagger.load.scenario.test2.delay.start.in.milliseconds"));
+        Integer delayStartForTest2 = Integer.valueOf(getTestPropertyValue("jagger.load.scenario.test2.delay.start.in.milliseconds"));
+        ///xml
         String pathForTest2 = getTestPropertyValue("jagger.load.scenario.test2.url.path");
 
         JTestDefinition testDefinitionForTest2 = JTestDefinition
@@ -91,21 +95,31 @@ public class JLoadScenarioProvider extends JaggerPropertiesProvider {
                 .withQueryProvider(new QueriesProvider(pathForTest2))
                 .withLoadBalancer(new RoundRobinLoadBalancer())
                 .addValidator(new ValidatorResponseStatus())
-                .addValidator(new ValidatorResponseUrl(pathForTest2))
+                .addValidator(new ValidatorResponseXML())
                 .addListener(new ResponseCalculator())
                 .build();
 
         JTerminationCriteria terminationCriteriaForTest2 = JTerminationCriteriaDuration.of(DurationInSeconds.of(terminationDurationForTest2));
 
-        JLoadProfileInvocation loadProfileInvocationForTest2 = JLoadProfileInvocation
-                .builder(InvocationCount.of(1), ThreadCount.of(userNumberForTest2))
-                //.builder(InvocationCount.of(userNumberForTest2), ThreadCount.of(userNumberForTest2))
+        JLoadProfileUsers loadProfileUsersForTest21 = JLoadProfileUsers
+                .builder(NumberOfUsers.of(1))
+                .build();
+        JLoadProfileUsers loadProfileUsersForTest22 = JLoadProfileUsers
+                .builder(NumberOfUsers.of(1))
+                .withStartDelayInSeconds(delayStartForTest2)
+                .build();
+        JLoadProfileUsers loadProfileUsersForTest23 = JLoadProfileUsers
+                .builder(NumberOfUsers.of(1))
+                .withStartDelayInSeconds(delayStartForTest2)
+                .build();
+
+        JLoadProfileUserGroups loadProfileUserGroupsForTest2 = JLoadProfileUserGroups
+                .builder(loadProfileUsersForTest21,loadProfileUsersForTest22,loadProfileUsersForTest23)
                 .withDelayBetweenInvocationsInMilliseconds(delayInvocationDurationForTest2)
-                .withPeriodBetweenLoadInSeconds(delayStartDurationForTest2)
                 .build();
 
         JLoadTest jLoadTest2 = JLoadTest
-                .builder(Id.of("JaggerLoadTest2"), testDefinitionForTest2, loadProfileInvocationForTest2, terminationCriteriaForTest2)
+                .builder(Id.of("JaggerLoadTest2"), testDefinitionForTest2, loadProfileUserGroupsForTest2, terminationCriteriaForTest2)
                 .addListener(new CollectThreadsTestListener())
                 .build();
 
@@ -114,12 +128,15 @@ public class JLoadScenarioProvider extends JaggerPropertiesProvider {
                 .build();
 
 
-        Long terminationDurationForTest3 = Long.valueOf(getTestPropertyValue("jagger.load.scenario.test3.termination.duration.in.seconds"));
-        Long userNumberForTest3= Long.valueOf(getTestPropertyValue("jagger.load.scenario.test3.users"));
-        //2000
-        Integer delayInvocationDurationForTest3User1 = Integer.valueOf(getTestPropertyValue("jagger.load.scenario.test3.delay.in.milliseconds.user1"));
-        //1500
-        Integer delayInvocationDurationForTest3User2 = Integer.valueOf(getTestPropertyValue("jagger.load.scenario.test3.delay.in.milliseconds.user2"));
+        //180
+        Integer terminationDurationForTest3 = Integer.valueOf(getTestPropertyValue("jagger.load.scenario.test3.termination.duration.in.seconds"));
+        //2
+        Integer userNumberForTest3= Integer.valueOf(getTestPropertyValue("jagger.load.scenario.test3.users"));
+        //20000
+        Integer delayInvocationForTest3 = Integer.valueOf(getTestPropertyValue("jagger.load.scenario.test3.delay.in.milliseconds.user1"));
+        //15000
+        Integer delayStartForTest3User2 = Integer.valueOf(getTestPropertyValue("jagger.load.scenario.test3.delay.in.milliseconds.user2"));
+        ///response-headers
         String pathForTest3 = getTestPropertyValue("jagger.load.scenario.test3.url.path");
 
         JTestDefinition testDefinitionForTest3 = JTestDefinition
@@ -129,8 +146,7 @@ public class JLoadScenarioProvider extends JaggerPropertiesProvider {
                 .withLoadBalancer(new RoundRobinLoadBalancer())
                 .addValidator(new ValidatorResponseStatus())
                 .addValidator(new ValidatorResponseValue())
-                //.addListener(new NotNullInvocationListener())
-                .addListener(new ResponceLengthCalculator())
+                .addListener(new ResponseLengthCalculator())
                 .build();
 
         JTerminationCriteria terminationCriteriaForTest3User1 = JTerminationCriteriaDuration.of(DurationInSeconds.of(terminationDurationForTest3));
@@ -138,21 +154,22 @@ public class JLoadScenarioProvider extends JaggerPropertiesProvider {
         JTerminationCriteria terminationCriteriaForTest3User2 = JTerminationCriteriaBackground.getInstance();
 
         JLoadProfileUsers loadProfileUsersForTest3User1 = JLoadProfileUsers
-                .builder(NumberOfUsers.of(userNumberForTest3))
+                .builder(NumberOfUsers.of(1))
                 .build();
 
         JLoadProfileUsers loadProfileUsersForTest3User2 = JLoadProfileUsers
-                .builder(NumberOfUsers.of(userNumberForTest3))
+                .builder(NumberOfUsers.of(1))
+                .withStartDelayInSeconds(delayStartForTest3User2)
                 .build();
 
         JLoadProfileUserGroups loadProfileUserGroupsForTest31 = JLoadProfileUserGroups
                 .builder(loadProfileUsersForTest3User1,loadProfileUsersForTest3User2)
-                .withDelayBetweenInvocationsInMilliseconds(delayInvocationDurationForTest3User1)
+                .withDelayBetweenInvocationsInMilliseconds(delayInvocationForTest3)
                 .build();
 
         JLoadProfileUserGroups loadProfileUserGroupsForTest32 = JLoadProfileUserGroups
                 .builder(loadProfileUsersForTest3User1,loadProfileUsersForTest3User2)
-                .withDelayBetweenInvocationsInMilliseconds(delayInvocationDurationForTest3User2)
+                .withDelayBetweenInvocationsInMilliseconds(delayInvocationForTest3)
                 .build();
 
         JLoadTest jLoadTest3User1 = JLoadTest

@@ -18,7 +18,7 @@ public class ValidatorResponseStatus implements ResponseValidatorProvider {
         return new ResponseValidator<JHttpQuery, JHttpEndpoint, JHttpResponse>(taskId, sessionId, kernelContext) {
             @Override
             public String getName() {
-                return "Successful status code Validator";
+                return "Successful status code validator";
             }
 
             @Override

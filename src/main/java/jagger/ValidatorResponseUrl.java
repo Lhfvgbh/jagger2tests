@@ -22,12 +22,12 @@ public class ValidatorResponseUrl implements ResponseValidatorProvider {
         return new ResponseValidator<JHttpQuery, JHttpEndpoint, JHttpResponse>(taskId, sessionId, kernelContext) {
             @Override
             public String getName() {
-                return "Correct URL Validator";
+                return "Correct URL validator";
             }
 
             @Override
             public boolean validate(JHttpQuery jHttpQuery, JHttpEndpoint jHttpEndpoint, JHttpResponse jHttpResponse, long l) {
-                if (!jHttpQuery.getPath().toString().equals(path)) {
+                if (new GetResponseParser().getResponseParser(jHttpResponse).getUrl().equals(path)) {
                     log.error("Invalid query path " + jHttpQuery.getPath());
                     return false;
                 } else return true;

@@ -1,6 +1,5 @@
 package jagger;
 
-import com.griddynamics.jagger.invoker.scenario.JHttpUserScenario;
 import com.griddynamics.jagger.invoker.v2.JHttpEndpoint;
 
 import java.net.URI;
