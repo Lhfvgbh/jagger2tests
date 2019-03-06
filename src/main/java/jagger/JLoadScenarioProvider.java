@@ -9,8 +9,10 @@ import com.griddynamics.jagger.user.test.configurations.JLoadTest;
 import com.griddynamics.jagger.user.test.configurations.JParallelTestsGroup;
 import com.griddynamics.jagger.user.test.configurations.JTestDefinition;
 import com.griddynamics.jagger.user.test.configurations.auxiliary.Id;
+import com.griddynamics.jagger.user.test.configurations.load.JLoadProfileInvocation;
 import com.griddynamics.jagger.user.test.configurations.load.JLoadProfileUserGroups;
 import com.griddynamics.jagger.user.test.configurations.load.JLoadProfileUsers;
+import com.griddynamics.jagger.user.test.configurations.load.auxiliary.InvocationCount;
 import com.griddynamics.jagger.user.test.configurations.load.auxiliary.NumberOfUsers;
 import com.griddynamics.jagger.user.test.configurations.termination.JTerminationCriteria;
 import com.griddynamics.jagger.user.test.configurations.termination.JTerminationCriteriaBackground;
@@ -110,7 +112,7 @@ public class JLoadScenarioProvider extends JaggerPropertiesProvider {
                 .build();
         JLoadProfileUsers xmlLoadProfileUser3 = JLoadProfileUsers
                 .builder(NumberOfUsers.of(1))
-                .withStartDelayInSeconds(delayStartForXMLTest)
+                .withStartDelayInSeconds(delayStartForXMLTest*2)
                 .build();
 
         JLoadProfileUserGroups xmlLoadProfileGroup = JLoadProfileUserGroups
