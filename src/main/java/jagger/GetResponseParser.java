@@ -19,9 +19,9 @@ public class GetResponseParser {
         this.mapper = new ObjectMapper();
     }
 
-    public GetResponse getResponseParser(JHttpResponse response) {
+    public GetResponse getResponseParser(String response) {
         try {
-            return mapper.readValue(response.getBody().toString(), GetResponse.class);
+            return mapper.readValue(response, GetResponse.class);
         } catch (IOException e) {
             log.error("Invalid response body " + e.getMessage());
         }

@@ -27,7 +27,7 @@ public class ValidatorResponseUrl implements ResponseValidatorProvider {
 
             @Override
             public boolean validate(JHttpQuery jHttpQuery, JHttpEndpoint jHttpEndpoint, JHttpResponse jHttpResponse, long l) {
-                if (new GetResponseParser().getResponseParser(jHttpResponse).getUrl().equals(path)) {
+                if (new GetResponseParser().getResponseParser(jHttpResponse.getBody().toString()).getUrl().equals(path)) {
                     log.error("Invalid query path " + jHttpQuery.getPath());
                     return false;
                 } else return true;

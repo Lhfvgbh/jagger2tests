@@ -30,14 +30,12 @@ public class HeadersCalculator extends ServicesAware implements Provider<Invocat
 
             @Override
             public void onSuccess(InvocationInfo invocationInfo) {
-                int counter = 0;
                 if (invocationInfo.getResult() != null){
                     JHttpResponse response = (JHttpResponse) invocationInfo.getResult();
                     GetResponseParser parser = new GetResponseParser();
-                    GetResponseParser.GetResponse restResponse = parser.getResponseParser(response);
+                    GetResponseParser.GetResponse restResponse = parser.getResponseParser(response.getBody().toString());
                     Map<String, Object> headers = restResponse.getHeaders();
-                    counter = headers.size();
-                    getMetricService().saveValue(metricName, counter);
+                    getMetricService().saveValue(metricName, headers.size());
                 }
             }
 

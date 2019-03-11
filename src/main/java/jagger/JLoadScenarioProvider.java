@@ -14,6 +14,7 @@ import com.griddynamics.jagger.user.test.configurations.load.JLoadProfileUserGro
 import com.griddynamics.jagger.user.test.configurations.load.JLoadProfileUsers;
 import com.griddynamics.jagger.user.test.configurations.load.auxiliary.InvocationCount;
 import com.griddynamics.jagger.user.test.configurations.load.auxiliary.NumberOfUsers;
+import com.griddynamics.jagger.user.test.configurations.load.auxiliary.ThreadCount;
 import com.griddynamics.jagger.user.test.configurations.termination.JTerminationCriteria;
 import com.griddynamics.jagger.user.test.configurations.termination.JTerminationCriteriaBackground;
 import com.griddynamics.jagger.user.test.configurations.termination.JTerminationCriteriaDuration;
@@ -112,11 +113,11 @@ public class JLoadScenarioProvider extends JaggerPropertiesProvider {
                 .build();
         JLoadProfileUsers xmlLoadProfileUser3 = JLoadProfileUsers
                 .builder(NumberOfUsers.of(1))
-                .withStartDelayInSeconds(delayStartForXMLTest*2)
+                .withStartDelayInSeconds(delayStartForXMLTest * 2)
                 .build();
 
         JLoadProfileUserGroups xmlLoadProfileGroup = JLoadProfileUserGroups
-                .builder(xmlLoadProfileUser1,xmlLoadProfileUser2,xmlLoadProfileUser3)
+                .builder(xmlLoadProfileUser1, xmlLoadProfileUser2, xmlLoadProfileUser3)
                 .withDelayBetweenInvocationsInMilliseconds(delayInvocationForXMLTest)
                 .build();
 
@@ -133,7 +134,7 @@ public class JLoadScenarioProvider extends JaggerPropertiesProvider {
         //180
         Integer terminationDurationForResponseTest = Integer.valueOf(getTestPropertyValue("jagger.load.scenario.test3.termination.duration.in.seconds"));
         //2
-        Integer userNumberForResponseTest= Integer.valueOf(getTestPropertyValue("jagger.load.scenario.test3.users"));
+        Integer userNumberForResponseTest = Integer.valueOf(getTestPropertyValue("jagger.load.scenario.test3.users"));
         //20000
         Integer delayInvocationForResponseTest = Integer.valueOf(getTestPropertyValue("jagger.load.scenario.test3.delay.in.milliseconds.user1"));
         //15000
@@ -165,12 +166,12 @@ public class JLoadScenarioProvider extends JaggerPropertiesProvider {
                 .build();
 
         JLoadProfileUserGroups responseLoadProfileGroup1 = JLoadProfileUserGroups
-                .builder(responseLoadProfileUser1,responseLoadProfileUser2)
+                .builder(responseLoadProfileUser1, responseLoadProfileUser2)
                 .withDelayBetweenInvocationsInMilliseconds(delayInvocationForResponseTest)
                 .build();
 
         JLoadProfileUserGroups responseLoadProfileGroup2 = JLoadProfileUserGroups
-                .builder(responseLoadProfileUser1,responseLoadProfileUser2)
+                .builder(responseLoadProfileUser1, responseLoadProfileUser2)
                 .withDelayBetweenInvocationsInMilliseconds(delayInvocationForResponseTest)
                 .build();
 
@@ -199,8 +200,13 @@ public class JLoadScenarioProvider extends JaggerPropertiesProvider {
                 .addListener(new NotNullInvocationListener())
                 .build();
 
+
+        JLoadProfileInvocation getLoadProfileInvocation = JLoadProfileInvocation
+                .builder(InvocationCount.of(iterationsNumberForGetTest), ThreadCount.of(userNumberForGetTest))
+                .build();
+
         JLoadTest getLoadTest2 = JLoadTest
-                .builder(Id.of("GetLoadTest2"), getTestDefinition2, getLoadProfileGroup, getTerminationCriteria)
+                .builder(Id.of("GetLoadTest2"), getTestDefinition2, getLoadProfileInvocation, getTerminationCriteria)
                 .addListener(new CollectThreadsTestListener())
                 .build();
 
@@ -209,10 +215,7 @@ public class JLoadScenarioProvider extends JaggerPropertiesProvider {
                 .build();
 
 
-
-
-        return JLoadScenario.builder(Id.of("testJaggerLoadScenario"), getTestsGroup,getTestsGroup2,xmlTestsGroup,responseTestsGroup)
-        //return JLoadScenario.builder(Id.of("testJaggerLoadScenario"), getTestsGroup2)
+        return JLoadScenario.builder(Id.of("testJaggerLoadScenario"), getTestsGroup, getTestsGroup2, xmlTestsGroup, responseTestsGroup)
                 .addListener(new ExampleLoadScenarioListener())
                 .withLatencyPercentiles(Arrays.asList(85D, 90D, 95D))
                 .build();
