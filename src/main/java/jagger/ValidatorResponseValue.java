@@ -9,7 +9,6 @@ import com.griddynamics.jagger.invoker.v2.JHttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 public class ValidatorResponseValue implements ResponseValidatorProvider {
     private static final Logger log = LoggerFactory.getLogger(ValidatorResponseStatus.class);
 

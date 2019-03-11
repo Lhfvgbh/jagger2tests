@@ -189,8 +189,30 @@ public class JLoadScenarioProvider extends JaggerPropertiesProvider {
                 .build();
 
 
+        JTestDefinition getTestDefinition2 = JTestDefinition
+                .builder(Id.of("GetTestDefinition2"), new EndpointsProvider(url))
+                .withInvoker(CustomHttpInvokerProvider.nonVerbose())
+                .withQueryProvider(new GetQueriesProvider())
+                .withLoadBalancer(new RoundRobinLoadBalancer())
+                .addValidator(new ValidatorResponseStatus())
+                .addListener(new GetHeadersCalculator())
+                .addListener(new NotNullInvocationListener())
+                .build();
 
-        return JLoadScenario.builder(Id.of("testJaggerLoadScenario"), getTestsGroup,xmlTestsGroup,responseTestsGroup)
+        JLoadTest getLoadTest2 = JLoadTest
+                .builder(Id.of("GetLoadTest2"), getTestDefinition2, getLoadProfileGroup, getTerminationCriteria)
+                .addListener(new CollectThreadsTestListener())
+                .build();
+
+        JParallelTestsGroup getTestsGroup2 = JParallelTestsGroup
+                .builder(Id.of("GetTestsGroup2"), getLoadTest2)
+                .build();
+
+
+
+
+        return JLoadScenario.builder(Id.of("testJaggerLoadScenario"), getTestsGroup,getTestsGroup2,xmlTestsGroup,responseTestsGroup)
+        //return JLoadScenario.builder(Id.of("testJaggerLoadScenario"), getTestsGroup2)
                 .addListener(new ExampleLoadScenarioListener())
                 .withLatencyPercentiles(Arrays.asList(85D, 90D, 95D))
                 .build();
